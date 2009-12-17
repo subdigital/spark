@@ -49,6 +49,8 @@ namespace Spark.Web.Mvc.Tests
             var mocks = new MockRepository();
             var httpContext = mocks.StrictMock<HttpContextBase>();
             var httpRequest = mocks.StrictMock<HttpRequestBase>();
+            var textWriter = mocks.StrictMock<TextWriter>();
+
             SetupResult.For(httpContext.Request).Return(httpRequest);
 
             var controller = mocks.StrictMock<ControllerBase>();
@@ -64,7 +66,8 @@ namespace Spark.Web.Mvc.Tests
             mocks.ReplayAll();
 
             var view = new StubSparkView();
-            var viewContext = new ViewContext(new ControllerContext(httpContext, new RouteData(), controller), view, new ViewDataDictionary(), new TempDataDictionary());
+            var controllerContext = new ControllerContext(httpContext, new RouteData(), controller);
+            var viewContext = new ViewContext(controllerContext, view, new ViewDataDictionary(), new TempDataDictionary(), textWriter);
 
             view = new StubSparkView { ViewContext = viewContext };
             Assert.AreEqual("", view.SiteRoot);
